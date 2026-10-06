@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.core.auth import get_current_user
@@ -34,9 +36,15 @@ async def get_organization(organization_id: str, current_user=Depends(get_curren
     if organization_id not in {"tenant_yandytech", "tenant_organization_b", "tenant_organization_c"}:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization not found")
 
+    names = {
+        "tenant_yandytech": "YandyTech Community",
+        "tenant_organization_b": "Organization B",
+        "tenant_organization_c": "Organization C",
+    }
+
     return {
         "id": organization_id,
-        "name": "YandyTech Community" if organization_id == "tenant_yandytech" else "Other Organization",
-        "slug": "yandytech-community" if organization_id == "tenant_yandytech" else "other-organization",
-        "description": "Tenant configured for the YandyTech HR product.",
+        "name": names[organization_id],
+        "slug": organization_id.replace("tenant_", "").replace("_", "-"),
+        "description": "Configured tenant for the YandyTech HR product.",
     }

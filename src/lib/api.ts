@@ -9,19 +9,21 @@ export function useApiClient() {
   const { getAccessTokenSilently } = useAuth0()
 
   const getToken = async () => {
-    const token = await getAccessTokenSilently({
+    return await getAccessTokenSilently({
       detailedResponse: false,
-      authorizationParams: { audience: import.meta.env.VITE_API_AUDIENCE || 'https://yandytech-hr-api' },
+      authorizationParams: {
+        audience: import.meta.env.VITE_API_AUDIENCE || 'https://yandytech-hr-api',
+      },
     })
-
-    return token
   }
 
   return {
-    async get<T>(url: string) {
+    async get<T>(url: string): Promise<T> {
       const token = await getToken()
       const response = await api.get<T>(url, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       })
       return response.data
     },

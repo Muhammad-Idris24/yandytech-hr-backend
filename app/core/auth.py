@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-import jwt as pyjwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
@@ -21,28 +20,32 @@ class AuthenticatedUser(BaseModel):
     email: str | None = None
 
 
+def _build_dev_user() -> AuthenticatedUser:
+    return AuthenticatedUser(
+        sub="dev-user",
+        tenant_id="tenant_yandytech",
+        roles=["hr_admin", "manager"],
+        permissions=[
+            "organization.read",
+            "organization.write",
+            "employee.read",
+            "employee.write",
+            "payroll.read",
+            "payroll.write",
+            "attendance.read",
+            "attendance.write",
+            "leave.read",
+            "leave.write",
+        ],
+        email="dev@yandytech.org",
+    )
+
+
 async def get_current_user(
     credentials: HTTPAuthorizationCredentials | None = Depends(security),
 ) -> AuthenticatedUser:
     if settings.auth0_disabled:
-        return AuthenticatedUser(
-            sub="dev-user",
-            tenant_id="tenant_yandytech",
-            roles=["hr_admin", "manager"],
-            permissions=[
-                "organization.read",
-                "organization.write",
-                "employee.read",
-                "employee.write",
-                "payroll.read",
-                "payroll.write",
-                "attendance.read",
-                "attendance.write",
-                "leave.read",
-                "leave.write",
-            ],
-            email="dev@yandytech.org",
-        )
+        return _build_dev_user()
 
     if credentials is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing bearer token")
