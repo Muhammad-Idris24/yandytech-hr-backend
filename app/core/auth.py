@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import jwt as pyjwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
@@ -27,14 +28,18 @@ async def get_current_user(
         return AuthenticatedUser(
             sub="dev-user",
             tenant_id="tenant_yandytech",
-            roles=["hr_admin"],
+            roles=["hr_admin", "manager"],
             permissions=[
-                "employee.read",
-                "employee.write",
                 "organization.read",
                 "organization.write",
+                "employee.read",
+                "employee.write",
                 "payroll.read",
                 "payroll.write",
+                "attendance.read",
+                "attendance.write",
+                "leave.read",
+                "leave.write",
             ],
             email="dev@yandytech.org",
         )
