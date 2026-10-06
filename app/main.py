@@ -5,8 +5,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.logging import logger
+from app.modules.attendance.router import router as attendance_router
 from app.modules.employees.router import router as employees_router
+from app.modules.leave.router import router as leave_router
 from app.modules.organization.router import router as organization_router
+from app.modules.payroll.router import router as payroll_router
 
 app = FastAPI(
     title="YandyTech HR SaaS API",
@@ -26,6 +29,9 @@ app.add_middleware(
 
 app.include_router(organization_router, prefix="/api/v1")
 app.include_router(employees_router, prefix="/api/v1")
+app.include_router(attendance_router, prefix="/api/v1")
+app.include_router(leave_router, prefix="/api/v1")
+app.include_router(payroll_router, prefix="/api/v1")
 
 
 @app.get("/health")
